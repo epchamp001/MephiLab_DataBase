@@ -1,43 +1,21 @@
 package random_fields
 
 import (
+	randData "ORM_DB/internal/database/seed/RandomData"
 	"fmt"
 	"math/rand"
 )
 
-var streetsInMoscow = []string{
-	"Арбатская улица",
-	"Тверская улица",
-	"Ленинский проспект",
-	"Садовая-Кудринская улица",
-	"Проспект Мира",
-	"Новинский бульвар",
-	"Пречистенка",
-	"Кутузовский проспект",
-	"Большая Якиманка",
-	"Лубянка",
-}
-
-var districtsInMoscow = []string{
-	"ЦАО (Центральный административный округ)",
-	"САО (Северный административный округ)",
-	"СВАО (Северо-Восточный административный округ)",
-	"ВАО (Восточный административный округ)",
-	"ЮВАО (Юго-Восточный административный округ)",
-	"ЮАО (Южный административный округ)",
-	"ЮЗАО (Юго-Западный административный округ)",
-	"ЗАО (Западный административный округ)",
-	"СЗАО (Северо-Западный административный округ)",
-	"ЗелАО (Зеленоградский административный округ)",
-	"НАО (Новомосковский административный округ)",
-	"ТАО (Троицкий административный округ)",
-}
-
+// GenerateMoscowAddress генерирует случайный адрес в Москве
 func GenerateMoscowAddress() string {
-	street := streetsInMoscow[rand.Intn(len(streetsInMoscow))]
-	district := districtsInMoscow[rand.Intn(len(districtsInMoscow))]
+	if len(randData.StreetsInMoscow) == 0 || len(randData.RegionsInMoscow) == 0 {
+		return "Данные для адресов не загружены"
+	}
+
+	street := randData.StreetsInMoscow[rand.Intn(len(randData.StreetsInMoscow))]
+	district := randData.RegionsInMoscow[rand.Intn(len(randData.RegionsInMoscow))]
 	houseNumber := rand.Intn(100) + 1     // Генерируем номер дома от 1 до 100
 	apartmentNumber := rand.Intn(200) + 1 // Генерируем номер квартиры от 1 до 200
 
-	return fmt.Sprintf("%s, дом %d, кв. %d, %s, Москва", street, houseNumber, apartmentNumber, district)
+	return fmt.Sprintf("%s, дом %d, кв. %d, район %s, Москва", street, houseNumber, apartmentNumber, district)
 }

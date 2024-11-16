@@ -1,7 +1,7 @@
 package seed
 
 import (
-	"ORM_BD/models"
+	"ORM_DB/models"
 	"math/rand"
 )
 
@@ -36,7 +36,11 @@ func randomStatus() models.StatusEnum {
 }
 
 func randomSenderType() models.SenderTypeEnum {
-	types := []models.SenderTypeEnum{models.ClientSender, models.CourierSender, models.SupportStaffSender}
+	types := []models.SenderTypeEnum{
+		models.ClientSender,
+		models.CourierSender,
+		models.SupportStaffSender,
+	}
 	return types[rand.Intn(len(types))]
 }
 

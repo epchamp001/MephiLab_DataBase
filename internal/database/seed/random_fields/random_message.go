@@ -1,44 +1,33 @@
 package random_fields
 
 import (
-	"ORM_BD/models"
+	randData "ORM_DB/internal/database/seed/RandomData"
+	"ORM_DB/models"
 	"math/rand"
 )
 
-var courierMessages = []string{
-	"Ваш заказ доставлен, спасибо за выбор нашей службы.",
-	"Я прибыл на адрес, пожалуйста, выйдите.",
-	"Не могу найти ваш адрес, уточните местоположение.",
-	"Задерживаюсь из-за пробки, скоро буду.",
-	"Ваш заказ оставлен на ресепшене, проверьте, пожалуйста.",
-}
-
-var supportMessages = []string{
-	"Здравствуйте! Как я могу вам помочь?",
-	"Ваш запрос принят в обработку.",
-	"Извините за неудобства. Мы работаем над решением проблемы.",
-	"Ваш возврат был успешно обработан.",
-	"Пожалуйста, уточните детали вашего вопроса.",
-	"Ваше обращение передано в соответствующий отдел.",
-}
-
-var clientMessages = []string{
-	"Когда будет доставлен мой заказ?",
-	"Я не получил чек на оплату.",
-	"Курьер опоздал, прошу уточнить статус доставки.",
-	"Можно ли изменить адрес доставки?",
-	"Спасибо за быструю доставку!",
-}
-
-func GenerateMessage(senderType models.SenderTypeEnum) string {
+func GenerateMessage(senderType, recipientType models.SenderTypeEnum) string {
 	switch senderType {
 	case models.ClientSender:
-		return clientMessages[rand.Intn(len(clientMessages))]
+		if recipientType == models.SupportStaffSender {
+			return randData.SupportMessagesClient[rand.Intn(len(randData.SupportMessagesClient))]
+		} else if recipientType == models.CourierSender {
+			return randData.ClientMessages[rand.Intn(len(randData.ClientMessages))]
+		}
 	case models.CourierSender:
-		return courierMessages[rand.Intn(len(courierMessages))]
+		if recipientType == models.SupportStaffSender {
+			return randData.SupportMessagesCourier[rand.Intn(len(randData.SupportMessagesCourier))]
+		} else if recipientType == models.ClientSender {
+			return randData.CourierMessages[rand.Intn(len(randData.CourierMessages))]
+		}
 	case models.SupportStaffSender:
-		return supportMessages[rand.Intn(len(supportMessages))]
+		if recipientType == models.ClientSender {
+			return randData.SupportMessagesClient[rand.Intn(len(randData.SupportMessagesClient))]
+		} else if recipientType == models.CourierSender {
+			return randData.SupportMessagesCourier[rand.Intn(len(randData.SupportMessagesCourier))]
+		}
 	default:
-		return "Неопределенный отправитель."
+		return "Неопределённый отправитель."
 	}
+	return "Некорректное сочетание отправителя и получателя."
 }

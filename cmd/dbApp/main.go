@@ -1,10 +1,10 @@
 package main
 
 import (
-	"ORM_BD/internal/config"
-	"ORM_BD/internal/database"
-	"ORM_BD/internal/database/seed"
-	"ORM_BD/internal/migrations"
+	"ORM_DB/internal/config"
+	"ORM_DB/internal/database"
+	"ORM_DB/internal/database/seed"
+	"ORM_DB/internal/migrations"
 	"fmt"
 )
 

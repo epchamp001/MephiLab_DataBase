@@ -1,7 +1,7 @@
 package migrations
 
 import (
-	"ORM_BD/models"
+	"ORM_DB/models"
 	"fmt"
 	"gorm.io/gorm"
 	"log"
