@@ -15,6 +15,12 @@ func main() {
 	// Устанавливаем соединение с базой данных
 	db := database.Connect()
 
+	// Удаляем все таблицы и ENUM поля
+	migrations.DropAllTablesAndEnums(db)
+
+	// Создаем ENUM поля
+	migrations.CreateEnums(db)
+
 	// Миграция таблиц
 	migrations.MigrateTables(db)
 	fmt.Println("Миграция таблиц завершена успешно")
