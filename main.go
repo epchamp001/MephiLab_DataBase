@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ORM_BD/database"
+	"ORM_BD/database/seed"
 	"fmt"
 	"log"
 	"os"
@@ -35,7 +35,7 @@ func main() {
 	fmt.Println("Database tables checked and migrated successfully")
 
 	// Генерация данных
-	database.SeedData(db)
+	seed.SeedData(db)
 	fmt.Println("Данные успешно сгенерированы")
 }
 
