@@ -4,92 +4,72 @@ import (
 	"time"
 )
 
-// Enum types
-type RoleEnum string
+// Типы данных для строковых констант
+type Role string
+type EmploymentStatus string
+type TransportType string
+type AvailabilityStatus string
+type ParticipantType string
+type Status string
+type SenderType string
+type Urgency string
+type CurrentStatus string
+type PaymentStatus string
+type PromoCodeType string
+type DeliveryType string
 
+// Константы
 const (
-	Sender   RoleEnum = "sender"
-	Receiver RoleEnum = "receiver"
-)
+	// Role
+	Sender   Role = "sender"
+	Receiver Role = "receiver"
 
-type EmploymentStatusEnum string
+	// EmploymentStatus
+	SelfEmployed EmploymentStatus = "self-employed"
+	Official     EmploymentStatus = "official"
 
-const (
-	SelfEmployed EmploymentStatusEnum = "self-employed"
-	Official     EmploymentStatusEnum = "official"
-)
+	// TransportType
+	OnFoot TransportType = "on foot"
+	Car    TransportType = "car"
+	Truck  TransportType = "truck"
 
-type TransportTypeEnum string
+	// AvailabilityStatus
+	Available AvailabilityStatus = "available"
+	Busy      AvailabilityStatus = "busy"
 
-const (
-	OnFoot TransportTypeEnum = "on foot"
-	Car    TransportTypeEnum = "car"
-	Truck  TransportTypeEnum = "truck"
-)
+	// ParticipantType
+	ClientParticipant  ParticipantType = "client"
+	CourierParticipant ParticipantType = "courier"
 
-type AvailabilityStatusEnum string
+	// Status
+	Open   Status = "open"
+	Closed Status = "closed"
 
-const (
-	Available AvailabilityStatusEnum = "available"
-	Busy      AvailabilityStatusEnum = "busy"
-)
+	// SenderType
+	ClientSender       SenderType = "client"
+	CourierSender      SenderType = "courier"
+	SupportStaffSender SenderType = "support staff"
 
-type ParticipantTypeEnum string
+	// Urgency
+	Urgent    Urgency = "urgent"
+	Scheduled Urgency = "scheduled"
 
-const (
-	ClientParticipant  ParticipantTypeEnum = "client"
-	CourierParticipant ParticipantTypeEnum = "courier"
-)
+	// CurrentStatus
+	WaitingForCourier CurrentStatus = "waiting for courier"
+	InTransit         CurrentStatus = "in transit"
+	Delivered         CurrentStatus = "delivered"
 
-type StatusEnum string
+	// PaymentStatus
+	Paid   PaymentStatus = "paid"
+	Unpaid PaymentStatus = "unpaid"
 
-const (
-	Open   StatusEnum = "open"
-	Closed StatusEnum = "closed"
-)
+	// PromoCodeType
+	Discount          PromoCodeType = "discount"
+	AdditionalService PromoCodeType = "additional service"
 
-type SenderTypeEnum string
-
-const (
-	ClientSender       SenderTypeEnum = "client"
-	CourierSender      SenderTypeEnum = "courier"
-	SupportStaffSender SenderTypeEnum = "support staff"
-)
-
-type UrgencyEnum string
-
-const (
-	Urgent    UrgencyEnum = "urgent"
-	Scheduled UrgencyEnum = "scheduled"
-)
-
-type CurrentStatusEnum string
-
-const (
-	WaitingForCourier CurrentStatusEnum = "waiting for courier"
-	InTransit         CurrentStatusEnum = "in transit"
-	Delivered         CurrentStatusEnum = "delivered"
-)
-
-type PaymentStatusEnum string
-
-const (
-	Paid   PaymentStatusEnum = "paid"
-	Unpaid PaymentStatusEnum = "unpaid"
-)
-
-type PromoCodeTypeEnum string
-
-const (
-	Discount          PromoCodeTypeEnum = "discount"
-	AdditionalService PromoCodeTypeEnum = "additional service"
-)
-
-type DeliveryTypeEnum string
-
-const (
-	DeliveryUrgent    DeliveryTypeEnum = "urgent"
-	DeliveryScheduled DeliveryTypeEnum = "scheduled"
+	// DeliveryType
+	DeliveryUrgent    DeliveryType = "urgent"
+	DeliveryScheduled DeliveryType = "scheduled"
 )
 
 // Entity structs with relationships
@@ -101,84 +81,99 @@ type SupportStaff struct {
 	Phone     string `gorm:"not null"`
 	Email     string `gorm:"not null; unique"`
 	Position  string
+	Chats     []Chat `gorm:"foreignKey:SupportStaffID"` // One-to-Many связь с Chat
 }
 
 type Client struct {
-	ID         uint     `gorm:"primaryKey"`
-	Role       RoleEnum `gorm:"type:role_enum; not null"`
-	FirstName  string   `gorm:"not null"`
-	LastName   string   `gorm:"not null"`
+	ID         uint   `gorm:"primaryKey"`
+	Role       Role   `gorm:"not null"` // Role: sender, receiver
+	FirstName  string `gorm:"not null"`
+	LastName   string `gorm:"not null"`
 	MiddleName string
 	Phone      string `gorm:"not null; unique"`
 	Email      string `gorm:"not null; unique"`
 	Address    string
+	Chats      []Chat      `gorm:"foreignKey:ParticipantID"`
+	OrdersSent []Order     `gorm:"foreignKey:SenderID"`
+	OrdersRecv []Order     `gorm:"foreignKey:RecipientID"`
+	PromoCodes []PromoCode `gorm:"foreignKey:ClientID"`
 }
 
 type Courier struct {
-	ID                 uint                   `gorm:"primaryKey"`
-	EmploymentStatus   EmploymentStatusEnum   `gorm:"type:employment_status_enum; not null"`
-	TransportType      TransportTypeEnum      `gorm:"type:transport_type_enum; not null"`
-	AvailabilityStatus AvailabilityStatusEnum `gorm:"type:availability_status_enum; not null"`
-	FirstName          string                 `gorm:"not null"`
-	LastName           string                 `gorm:"not null"`
-	Phone              string                 `gorm:"not null; unique"`
+	ID                 uint               `gorm:"primaryKey"`
+	EmploymentStatus   EmploymentStatus   `gorm:"not null"`
+	TransportType      TransportType      `gorm:"not null"`
+	AvailabilityStatus AvailabilityStatus `gorm:"not null"`
+	FirstName          string             `gorm:"not null"`
+	LastName           string             `gorm:"not null"`
+	Phone              string             `gorm:"not null; unique"`
 	Photo              string
 	Passport           string
 	GPSCoordinates     string
+	Chats              []Chat  `gorm:"foreignKey:ParticipantID"`
+	Orders             []Order `gorm:"foreignKey:CourierID"`
 }
 
 type Chat struct {
-	ID              uint                `gorm:"primaryKey"`
-	ParticipantType ParticipantTypeEnum `gorm:"type:participant_type_enum; not null"` // client или courier
-	ParticipantID   uint                `gorm:"not null"`
-	SupportStaffID  *uint               `gorm:"constraint:OnDelete:SET NULL"`
-	Status          StatusEnum          `gorm:"type:status_enum; not null"`
+	ID              uint            `gorm:"primaryKey"`
+	ParticipantType ParticipantType `gorm:"not null"`
+	ParticipantID   uint            `gorm:"not null"`
+	SupportStaffID  *uint           `gorm:"constraint:OnDelete:SET NULL"`
+	Status          Status          `gorm:"not null"`
 	CreationDate    time.Time
 	Reason          string
+	SupportStaff    SupportStaff `gorm:"foreignKey:SupportStaffID"`
 }
 
 type Message struct {
-	ID         uint           `gorm:"primaryKey"`
-	ChatID     uint           `gorm:"not null;constraint:OnDelete:CASCADE"`
-	SenderType SenderTypeEnum `gorm:"type:sender_type_enum; not null"`
-	SenderID   uint           `gorm:"not null"`
-	Timestamp  time.Time      `gorm:"not null"`
-	Text       string         `gorm:"not null"`
+	ID         uint       `gorm:"primaryKey"`
+	ChatID     uint       `gorm:"not null;constraint:OnDelete:CASCADE"`
+	SenderType SenderType `gorm:"not null"`
+	SenderID   uint       `gorm:"not null"`
+	Timestamp  time.Time
+	Text       string `gorm:"not null"`
+	Chat       Chat   `gorm:"foreignKey:ChatID"`
 }
 
 type Order struct {
-	ID                 uint              `gorm:"primaryKey"`
-	Urgency            UrgencyEnum       `gorm:"type:urgency_enum; not null"`
-	SenderID           uint              `gorm:"not null;constraint:OnDelete:CASCADE"`
-	RecipientID        uint              `gorm:"not null;constraint:OnDelete:CASCADE"`
-	CourierID          uint              `gorm:"not null;constraint:OnDelete:SET NULL"`
-	CurrentStatus      CurrentStatusEnum `gorm:"type:current_status_enum; not null"`
-	PromoCodeID        *uint             `gorm:"constraint:OnDelete:SET NULL"`
-	PaymentStatus      PaymentStatusEnum `gorm:"type:payment_status_enum; not null"`
-	RateID             uint              `gorm:"not null;constraint:OnDelete:SET NULL"`
+	ID                 uint          `gorm:"primaryKey"`
+	Urgency            Urgency       `gorm:"not null"`
+	SenderID           uint          `gorm:"not null;constraint:OnDelete:CASCADE"`
+	RecipientID        uint          `gorm:"not null;constraint:OnDelete:CASCADE"`
+	CourierID          uint          `gorm:"not null;constraint:OnDelete:SET NULL"`
+	CurrentStatus      CurrentStatus `gorm:"not null"`
+	PromoCodeID        *uint         `gorm:"constraint:OnDelete:SET NULL"`
+	PaymentStatus      PaymentStatus `gorm:"not null"`
+	RateID             uint          `gorm:"not null;constraint:OnDelete:SET NULL"`
 	CreationDate       time.Time
 	ItemType           string
 	ItemValue          float64
 	Weight             float64
 	DiscountSurcharges float64
 	PaymentMethod      string
+	Sender             Client    `gorm:"foreignKey:SenderID"`
+	Recipient          Client    `gorm:"foreignKey:RecipientID"`
+	Courier            Courier   `gorm:"foreignKey:CourierID"`
+	PromoCode          PromoCode `gorm:"foreignKey:PromoCodeID"`
+	Rate               Rate      `gorm:"foreignKey:RateID"`
 }
 
 type PromoCode struct {
-	ID             uint              `gorm:"primaryKey"`
-	Type           PromoCodeTypeEnum `gorm:"type:promo_code_type_enum; not null"`
-	ClientID       *uint             `gorm:"constraint:OnDelete:SET NULL"`
-	Code           string            `gorm:"not null; unique"`
-	DiscountAmount float64           `gorm:"not null"`
+	ID             uint          `gorm:"primaryKey"`
+	Type           PromoCodeType `gorm:"not null"`
+	ClientID       *uint         `gorm:"constraint:OnDelete:SET NULL"`
+	Code           string        `gorm:"not null; unique"`
+	DiscountAmount float64       `gorm:"not null"`
 	ValidUntil     time.Time
 	Personalized   bool
+	Client         Client `gorm:"foreignKey:ClientID"`
 }
 
 type Rate struct {
-	ID            uint              `gorm:"primaryKey"`
-	DeliveryType  DeliveryTypeEnum  `gorm:"type:delivery_type_enum; not null"`
-	TransportType TransportTypeEnum `gorm:"type:transport_type_enum; not null"`
-	Name          string            `gorm:"not null"`
-	Price         float64           `gorm:"not null"`
+	ID            uint          `gorm:"primaryKey"`
+	DeliveryType  DeliveryType  `gorm:"not null"`
+	TransportType TransportType `gorm:"not null"`
+	Name          string        `gorm:"not null"`
+	Price         float64       `gorm:"not null"`
 	Description   string
 }
