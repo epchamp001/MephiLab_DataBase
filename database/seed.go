@@ -3,7 +3,7 @@ package database
 import (
 	"ORM_BD/models"
 	"fmt"
-	randomdata "github.com/Pallinder/go-randomdata"
+	"github.com/Pallinder/go-randomdata"
 	"github.com/bxcodec/faker/v3"
 	"gorm.io/gorm"
 	"log"
@@ -95,7 +95,24 @@ func SeedData(db *gorm.DB) {
 		}
 	}()
 
-	// Генерация данных для SupportStaff
+	// Генерация данных
+	supportStaffs := generateSupportStaff(tx)
+	clients := generateClients(tx)
+	couriers := generateCouriers(tx)
+	promoCodes := generatePromoCodes(tx, clients)
+	rates := generateRates(tx)
+	generateOrders(tx, clients, couriers, promoCodes, rates)
+	chats := generateChats(tx, supportStaffs, clients, couriers)
+	generateMessages(tx, chats, clients)
+
+	// Завершаем транзакцию
+	if err := tx.Commit().Error; err != nil {
+		log.Fatalf("Ошибка при коммите транзакции: %v", err)
+	}
+	fmt.Println("Транзакция завершена успешно")
+}
+
+func generateSupportStaff(tx *gorm.DB) []models.SupportStaff {
 	var supportStaffs []models.SupportStaff
 	for i := 0; i < 150; i++ {
 		staff := models.SupportStaff{
@@ -112,29 +129,28 @@ func SeedData(db *gorm.DB) {
 		supportStaffs = append(supportStaffs, staff)
 	}
 	fmt.Println("Сгенерированы support staff")
+	return supportStaffs
+}
 
-	// Генерация данных для Clients
+func generateClients(tx *gorm.DB) []models.Client {
 	var clients []models.Client
-	usedPhones := make(map[string]bool) // Мапа для отслеживания уникальных номеров телефонов
+	usedPhones := make(map[string]bool)
 
 	for i := 0; i < 5000; i++ {
 		var phone string
-
-		// Генерация уникального номера телефона
 		for {
 			phone = faker.Phonenumber()
 			if !usedPhones[phone] {
-				usedPhones[phone] = true // Добавляем номер в мапу
+				usedPhones[phone] = true
 				break
 			}
 		}
-
 		client := models.Client{
 			Role:       randomRole(),
 			FirstName:  faker.FirstName(),
 			LastName:   faker.LastName(),
 			MiddleName: faker.Name(),
-			Phone:      phone, // Уникальный номер телефона
+			Phone:      phone,
 			Email:      faker.Email(),
 			Address:    fmt.Sprintf("%s, %s, %s, %s", randomdata.Street(), randomdata.City(), randomdata.State(randomdata.Small), randomdata.PostalCode("RU")),
 		}
@@ -145,29 +161,29 @@ func SeedData(db *gorm.DB) {
 		clients = append(clients, client)
 	}
 	fmt.Println("Сгенерированы клиенты")
-	// Генерация данных для Couriers
+	return clients
+}
+
+func generateCouriers(tx *gorm.DB) []models.Courier {
 	var couriers []models.Courier
-	usedCourierPhones := make(map[string]bool) // Мапа для отслеживания уникальных номеров телефонов курьеров
+	usedPhones := make(map[string]bool)
 
 	for i := 0; i < 2000; i++ {
 		var phone string
-
-		// Генерация уникального номера телефона
 		for {
 			phone = faker.Phonenumber()
-			if !usedCourierPhones[phone] {
-				usedCourierPhones[phone] = true // Добавляем номер в мапу
+			if !usedPhones[phone] {
+				usedPhones[phone] = true
 				break
 			}
 		}
-
 		courier := models.Courier{
 			EmploymentStatus:   randomEmploymentStatus(),
 			TransportType:      randomTransportType(),
 			AvailabilityStatus: randomAvailabilityStatus(),
 			FirstName:          faker.FirstName(),
 			LastName:           faker.LastName(),
-			Phone:              phone, // Уникальный номер телефона
+			Phone:              phone,
 			Photo:              faker.URL(),
 			Passport:           faker.Word(),
 			GPSCoordinates:     fmt.Sprintf("%f,%f", faker.Latitude(), faker.Longitude()),
@@ -179,7 +195,10 @@ func SeedData(db *gorm.DB) {
 		couriers = append(couriers, courier)
 	}
 	fmt.Println("Сгенерированы курьеры")
-	// Генерация данных для PromoCodes
+	return couriers
+}
+
+func generatePromoCodes(tx *gorm.DB, clients []models.Client) []models.PromoCode {
 	var promoCodes []models.PromoCode
 	for i := 0; i < 500; i++ {
 		clientID := clients[rand.Intn(len(clients))].ID
@@ -198,16 +217,18 @@ func SeedData(db *gorm.DB) {
 		promoCodes = append(promoCodes, promo)
 	}
 	fmt.Println("Сгенерированы промокоды")
+	return promoCodes
+}
 
-	// Генерация данных для таблицы Rates
+func generateRates(tx *gorm.DB) []models.Rate {
 	var rates []models.Rate
 	for i := 0; i < 50; i++ {
 		rate := models.Rate{
 			DeliveryType:  randomDeliveryType(),
 			TransportType: randomTransportType(),
 			Name:          fmt.Sprintf("Rate %d", i+1),
-			Price:         rand.Float64() * 100, // Генерация случайной цены
-			Description:   faker.Sentence(),     // Случайное описание
+			Price:         rand.Float64() * 100,
+			Description:   faker.Sentence(),
 		}
 		if err := tx.Create(&rate).Error; err != nil {
 			tx.Rollback()
@@ -216,9 +237,10 @@ func SeedData(db *gorm.DB) {
 		rates = append(rates, rate)
 	}
 	fmt.Println("Сгенерированы тарифы")
+	return rates
+}
 
-	// Генерация данных для Orders
-	var orders []models.Order
+func generateOrders(tx *gorm.DB, clients []models.Client, couriers []models.Courier, promoCodes []models.PromoCode, rates []models.Rate) {
 	for i := 0; i < 50000; i++ {
 		order := models.Order{
 			Urgency:            randomUrgency(),
@@ -240,16 +262,18 @@ func SeedData(db *gorm.DB) {
 			tx.Rollback()
 			log.Fatalf("Ошибка при создании заказа: %v", err)
 		}
-		orders = append(orders, order)
 	}
 	fmt.Println("Сгенерированы заказы")
+}
 
-	// Генерация данных для Chats
+func generateChats(tx *gorm.DB, supportStaffs []models.SupportStaff, clients []models.Client, couriers []models.Courier) []models.Chat {
 	var chats []models.Chat
+
 	for i := 0; i < 1000; i++ {
 		participantType := randomParticipantType()
 		var participantID uint
 
+		// Определяем участника (client или courier)
 		if participantType == models.ClientParticipant && len(clients) > 0 {
 			participantID = clients[rand.Intn(len(clients))].ID
 		} else if participantType == models.CourierParticipant && len(couriers) > 0 {
@@ -267,6 +291,7 @@ func SeedData(db *gorm.DB) {
 			CreationDate:    time.Now(),
 			Reason:          faker.Sentence(),
 		}
+
 		if err := tx.Create(&chat).Error; err != nil {
 			tx.Rollback()
 			log.Fatalf("Ошибка при создании чата: %v", err)
@@ -274,27 +299,26 @@ func SeedData(db *gorm.DB) {
 		chats = append(chats, chat)
 	}
 	fmt.Println("Сгенерированы чаты")
+	return chats
+}
 
-	// Генерация данных для Messages
+func generateMessages(tx *gorm.DB, chats []models.Chat, clients []models.Client) {
 	for i := 0; i < 8000; i++ {
 		chatID := chats[rand.Intn(len(chats))].ID
+		senderID := clients[rand.Intn(len(clients))].ID
+
 		message := models.Message{
 			ChatID:     chatID,
 			SenderType: randomSenderType(),
-			SenderID:   clients[rand.Intn(len(clients))].ID,
+			SenderID:   senderID,
 			Timestamp:  time.Now(),
 			Text:       faker.Sentence(),
 		}
+
 		if err := tx.Create(&message).Error; err != nil {
 			tx.Rollback()
 			log.Fatalf("Ошибка при создании сообщения: %v", err)
 		}
 	}
 	fmt.Println("Сгенерированы сообщения")
-
-	// Завершаем транзакцию
-	if err := tx.Commit().Error; err != nil {
-		log.Fatalf("Ошибка при коммите транзакции: %v", err)
-	}
-	fmt.Println("Транзакция завершена успешно")
 }
