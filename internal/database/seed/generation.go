@@ -22,7 +22,7 @@ func generateSupportStaff(tx *gorm.DB) []models.SupportStaff {
 			LastName:  lastName,
 			Phone:     faker.Phonenumber(),
 			Email:     faker.Email(),
-			Position:  randomJobTitle(),
+			Position:  random_fields.RandomJobTitle(),
 		}
 		if err := tx.Create(&staff).Error; err != nil {
 			tx.Rollback()
@@ -51,7 +51,7 @@ func generateClients(tx *gorm.DB) []models.Client {
 		firstName, lastName, middleName := random_fields.GenerateFullRussianName()
 
 		client := models.Client{
-			Role:       randomRole(),
+			Role:       random_fields.RandomRole(),
 			FirstName:  firstName,
 			LastName:   lastName,
 			MiddleName: middleName,
@@ -86,9 +86,9 @@ func generateCouriers(tx *gorm.DB) []models.Courier {
 		firstName, lastName, _ := random_fields.GenerateFullRussianName()
 
 		courier := models.Courier{
-			EmploymentStatus:   randomEmploymentStatus(),
-			TransportType:      randomTransportType(),
-			AvailabilityStatus: randomAvailabilityStatus(),
+			EmploymentStatus:   random_fields.RandomEmploymentStatus(),
+			TransportType:      random_fields.RandomTransportType(),
+			AvailabilityStatus: random_fields.RandomAvailabilityStatus(),
 			FirstName:          firstName,
 			LastName:           lastName,
 			Phone:              phone,
@@ -135,7 +135,7 @@ func generatePromoCodes(tx *gorm.DB, clients []models.Client) []models.PromoCode
 			}
 
 			promo := models.PromoCode{
-				Type:           randomPromoCodeType(),
+				Type:           random_fields.RandomPromoCodeType(),
 				ClientID:       &client.ID,
 				Code:           promoCode,
 				DiscountAmount: math.Round(rand.Float64() * 20),                     // Случайная скидка
@@ -160,8 +160,8 @@ func generateRates(tx *gorm.DB) []models.Rate {
 	var rates []models.Rate
 	for i := 0; i < 50; i++ {
 		rate := models.Rate{
-			DeliveryType:  randomDeliveryType(),
-			TransportType: randomTransportType(),
+			DeliveryType:  random_fields.RandomDeliveryType(),
+			TransportType: random_fields.RandomTransportType(),
 			Name:          fmt.Sprintf("Rate %d", i+1),
 			Price:         math.Round(rand.Float64() * 100),
 			Description:   faker.Sentence(),
@@ -207,12 +207,12 @@ func generateOrders(tx *gorm.DB, clients []models.Client, couriers []models.Cour
 
 		// Генерация заказа
 		order := models.Order{
-			Urgency:            randomUrgency(),
+			Urgency:            random_fields.RandomUrgency(),
 			SenderID:           sender.ID,
 			RecipientID:        recipient.ID,
 			CourierID:          couriers[rand.Intn(len(couriers))].ID,
-			CurrentStatus:      randomCurrentStatus(),
-			PaymentStatus:      randomPaymentStatus(),
+			CurrentStatus:      random_fields.RandomCurrentStatus(),
+			PaymentStatus:      random_fields.RandomPaymentStatus(),
 			RateID:             rates[rand.Intn(len(rates))].ID,
 			PromoCodeID:        promoCodeID, // Только если промокод связан с клиентом
 			CreationDate:       random_fields.GenerateRandomDate2024(),
@@ -220,7 +220,7 @@ func generateOrders(tx *gorm.DB, clients []models.Client, couriers []models.Cour
 			ItemValue:          math.Round(rand.Float64() * 100),
 			Weight:             math.Round(rand.Float64() * 10),
 			DiscountSurcharges: math.Round(rand.Float64() * 10),
-			PaymentMethod:      randomPaymentMethod(),
+			PaymentMethod:      random_fields.RandomPaymentMethod(),
 		}
 
 		// Сохранение заказа в БД
@@ -237,7 +237,7 @@ func generateChats(tx *gorm.DB, supportStaffs []models.SupportStaff, clients []m
 
 	for i := 0; i < 1000; i++ {
 		// Определяем случайный тип участника (client или courier)
-		participantType := randomParticipantType()
+		participantType := random_fields.RandomParticipantType()
 		var participantID uint
 
 		// Выбираем ID участника в зависимости от его типа
@@ -260,7 +260,7 @@ func generateChats(tx *gorm.DB, supportStaffs []models.SupportStaff, clients []m
 			ParticipantType: participantType,
 			ParticipantID:   participantID,
 			SupportStaffID:  &supportStaffID,
-			Status:          randomStatus(),
+			Status:          random_fields.RandomStatus(),
 			CreationDate:    random_fields.GenerateRandomDate2024(),
 			Reason:          reason,
 		}
@@ -284,7 +284,7 @@ func generateMessages(tx *gorm.DB, chats []models.Chat, clients []models.Client,
 		chat := chats[rand.Intn(len(chats))]
 
 		// Определяем случайный тип отправителя
-		senderType := randomSenderType()
+		senderType := random_fields.RandomSenderType()
 
 		var senderID uint
 		var recipientType models.SenderTypeEnum
