@@ -1,12 +1,13 @@
 package seed
 
 import (
+	"ORM_BD/internal/database/seed/random_fields"
 	"ORM_BD/models"
 	"fmt"
-	"github.com/Pallinder/go-randomdata"
 	"github.com/bxcodec/faker/v3"
 	"gorm.io/gorm"
 	"log"
+	"math"
 	"math/rand"
 	"time"
 )
@@ -15,8 +16,8 @@ func generateSupportStaff(tx *gorm.DB) []models.SupportStaff {
 	var supportStaffs []models.SupportStaff
 	for i := 0; i < 150; i++ {
 		staff := models.SupportStaff{
-			FirstName: faker.FirstName(),
-			LastName:  faker.LastName(),
+			FirstName: random_fields.GenerateRussianFirstName(),
+			LastName:  random_fields.GenerateRussianLastName(),
 			Phone:     faker.Phonenumber(),
 			Email:     faker.Email(),
 			Position:  randomJobTitle(),
@@ -44,14 +45,17 @@ func generateClients(tx *gorm.DB) []models.Client {
 				break
 			}
 		}
+
+		firstName := random_fields.GenerateRussianFirstName()
+
 		client := models.Client{
 			Role:       randomRole(),
-			FirstName:  faker.FirstName(),
-			LastName:   faker.LastName(),
-			MiddleName: faker.Name(),
+			FirstName:  firstName,
+			LastName:   random_fields.GenerateRussianLastName(),
+			MiddleName: random_fields.GenerateMiddleNameByFirstName(firstName),
 			Phone:      phone,
 			Email:      faker.Email(),
-			Address:    fmt.Sprintf("%s, %s, %s, %s", randomdata.Street(), randomdata.City(), randomdata.State(randomdata.Small), randomdata.PostalCode("RU")),
+			Address:    random_fields.GenerateMoscowAddress(),
 		}
 		if err := tx.Create(&client).Error; err != nil {
 			tx.Rollback()
@@ -80,12 +84,12 @@ func generateCouriers(tx *gorm.DB) []models.Courier {
 			EmploymentStatus:   randomEmploymentStatus(),
 			TransportType:      randomTransportType(),
 			AvailabilityStatus: randomAvailabilityStatus(),
-			FirstName:          faker.FirstName(),
-			LastName:           faker.LastName(),
+			FirstName:          random_fields.GenerateRussianFirstName(),
+			LastName:           random_fields.GenerateRussianLastName(),
 			Phone:              phone,
 			Photo:              faker.URL(),
-			Passport:           faker.Word(),
-			GPSCoordinates:     fmt.Sprintf("%f,%f", faker.Latitude(), faker.Longitude()),
+			Passport:           random_fields.GeneratePassportNumber(),
+			GPSCoordinates:     random_fields.GenerateMoscowCoordinates(),
 		}
 		if err := tx.Create(&courier).Error; err != nil {
 			tx.Rollback()
@@ -105,7 +109,7 @@ func generatePromoCodes(tx *gorm.DB, clients []models.Client) []models.PromoCode
 			Type:           randomPromoCodeType(),
 			ClientID:       &clientID,
 			Code:           fmt.Sprintf("%s-%d", faker.Word(), i),
-			DiscountAmount: rand.Float64() * 20,
+			DiscountAmount: math.Round(rand.Float64() * 20),
 			ValidUntil:     time.Now().AddDate(0, rand.Intn(12), rand.Intn(30)),
 			Personalized:   rand.Intn(2) == 0,
 		}
@@ -126,7 +130,7 @@ func generateRates(tx *gorm.DB) []models.Rate {
 			DeliveryType:  randomDeliveryType(),
 			TransportType: randomTransportType(),
 			Name:          fmt.Sprintf("Rate %d", i+1),
-			Price:         rand.Float64() * 100,
+			Price:         math.Round(rand.Float64() * 100),
 			Description:   faker.Sentence(),
 		}
 		if err := tx.Create(&rate).Error; err != nil {
@@ -150,11 +154,11 @@ func generateOrders(tx *gorm.DB, clients []models.Client, couriers []models.Cour
 			PaymentStatus:      randomPaymentStatus(),
 			RateID:             rates[rand.Intn(len(rates))].ID,
 			PromoCodeID:        &promoCodes[rand.Intn(len(promoCodes))].ID,
-			CreationDate:       time.Now(),
-			ItemType:           faker.Word(),
-			ItemValue:          rand.Float64() * 100,
-			Weight:             rand.Float64() * 10,
-			DiscountSurcharges: rand.Float64() * 10,
+			CreationDate:       random_fields.GenerateRandomDate2024(),
+			ItemType:           random_fields.RandomItemType(),
+			ItemValue:          math.Round(rand.Float64() * 100),
+			Weight:             math.Round(rand.Float64() * 10),
+			DiscountSurcharges: math.Round(rand.Float64() * 10),
 			PaymentMethod:      randomPaymentMethod(),
 		}
 		if err := tx.Create(&order).Error; err != nil {
@@ -187,8 +191,8 @@ func generateChats(tx *gorm.DB, supportStaffs []models.SupportStaff, clients []m
 			ParticipantID:   participantID,
 			SupportStaffID:  &supportStaffID,
 			Status:          randomStatus(),
-			CreationDate:    time.Now(),
-			Reason:          faker.Sentence(),
+			CreationDate:    random_fields.GenerateRandomDate2024(),
+			Reason:          random_fields.GenerateReason(),
 		}
 
 		if err := tx.Create(&chat).Error; err != nil {
@@ -206,12 +210,14 @@ func generateMessages(tx *gorm.DB, chats []models.Chat, clients []models.Client)
 		chatID := chats[rand.Intn(len(chats))].ID
 		senderID := clients[rand.Intn(len(clients))].ID
 
+		sendler := randomSenderType()
+
 		message := models.Message{
 			ChatID:     chatID,
-			SenderType: randomSenderType(),
+			SenderType: sendler,
 			SenderID:   senderID,
-			Timestamp:  time.Now(),
-			Text:       faker.Sentence(),
+			Timestamp:  random_fields.GenerateRandomDate2024(),
+			Text:       random_fields.GenerateMessage(sendler),
 		}
 
 		if err := tx.Create(&message).Error; err != nil {
