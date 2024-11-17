@@ -7,6 +7,6 @@
 
 
 ## Диаграмма
+![erd](https://github.com/user-attachments/assets/5f1b4bc8-35dd-4f3f-ba7d-53b9b94529a6)
 
-![Диаграмма сервиса доставки](images/erd.png)
 
