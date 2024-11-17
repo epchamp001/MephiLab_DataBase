@@ -11,10 +11,10 @@ import (
 
 func GeneratePromoCodes(tx *gorm.DB, clients []models.Client, count int) ([]models.PromoCode, error) {
 	var promoCodes []models.PromoCode
-	clientPromoCounts := make(map[uint]int) // Карта для отслеживания количества промокодов на клиента
+	clientPromoCounts := make(map[uint]int)
 
 	for _, client := range clients {
-		clientPromoCounts[client.ID] = 0 // Инициализация карты счетчиком промокодов
+		clientPromoCounts[client.ID] = 0
 	}
 
 	for i := 0; i < count; i++ {

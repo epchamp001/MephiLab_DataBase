@@ -16,27 +16,21 @@ func GenerateChats(tx *gorm.DB, clients []models.Client, couriers []models.Couri
 	}
 
 	for i := 0; i < count; i++ {
-		// Генерируем случайный тип участника
 		participantType := utils.RandomParticipantType()
 
 		var participantID uint
 		if participantType == models.ClientParticipant && len(clients) > 0 {
-			// Выбираем случайного клиента
 			client := clients[rand.Intn(len(clients))]
 			participantID = client.ID
 		} else if participantType == models.CourierParticipant && len(couriers) > 0 {
-			// Выбираем случайного курьера
 			courier := couriers[rand.Intn(len(couriers))]
 			participantID = courier.ID
 		} else {
-			// Если подходящего участника нет, пропускаем итерацию
 			continue
 		}
 
-		// Выбираем случайного сотрудника поддержки
 		support := supportStaff[rand.Intn(len(supportStaff))]
 
-		// Создаем объект чата
 		chat := models.Chat{
 			ParticipantID:   participantID,
 			ParticipantType: participantType, // Используем сгенерированный тип участника
@@ -46,13 +40,11 @@ func GenerateChats(tx *gorm.DB, clients []models.Client, couriers []models.Couri
 			Reason:          utils.GenerateReason(participantType),
 		}
 
-		// Сохраняем чат в базе данных
 		if err := tx.Create(&chat).Error; err != nil {
 			tx.Rollback()
 			return nil, err
 		}
 
-		// Добавляем чат в список
 		chats = append(chats, chat)
 	}
 

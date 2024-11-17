@@ -2,12 +2,12 @@ database:
   url: "postgres://champ001:123champ123@localhost:5432/mydatabase?sslmode=disable"
 
 data_generation:
-  num_chats: 100
-  num_clients: 500
-  num_orders: 50
-  num_messages: 150
-  num_promo_codes: 300
-  num_couriers: 200
-  num_support_staffs: 100
-  num_rates: 100
+  num_chats: 5000
+  num_clients: 10000
+  num_orders: 50000
+  num_messages: 25000
+  num_promo_codes: 1000
+  num_couriers: 2000
+  num_support_staffs: 1000
+  num_rates: 500
 

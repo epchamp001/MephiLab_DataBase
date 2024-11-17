@@ -5,7 +5,6 @@ import (
 	"math/rand"
 )
 
-// Генерация координат по Москве
 func GenerateMoscowCoordinates() string {
 	minLat := 55.55
 	maxLat := 55.95

@@ -6,7 +6,6 @@ import (
 	"log"
 )
 
-// Устанавливаем соединение с базой данных
 func Connect(connectionString string) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if err != nil {

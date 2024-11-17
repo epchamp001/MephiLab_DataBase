@@ -22,9 +22,8 @@ func GenerateRates(tx *gorm.DB, count int) ([]models.Rate, error) {
 			Description:   utils.GetRandomRateDescription(),
 		}
 
-		// Пытаемся создать тариф в базе данных
 		if err := tx.Create(&rate).Error; err != nil {
-			tx.Rollback() // Откатываем транзакцию при ошибке
+			tx.Rollback()
 			log.Fatalf("Ошибка при создании тарифа: %v", err)
 		}
 		rates = append(rates, rate)

@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Генерация номера паспорта (10 цифр)
+// GeneratePassportNumber Генерация номера паспорта (10 цифр)
 func GeneratePassportNumber() string {
 	rand.Seed(time.Now().UnixNano())
 	series := rand.Intn(10000)                      // Генерация серии (4 цифры)

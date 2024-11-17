@@ -4,7 +4,6 @@ import (
 	"ORM_DB/internal/config"
 	"ORM_DB/internal/database/seeds/generators"
 	"ORM_DB/internal/database/seeds/parsers"
-	"fmt"
 	"gorm.io/gorm"
 	"log"
 	"math/rand"
@@ -36,11 +35,12 @@ func SeedData(db *gorm.DB, countGen config.DataGenerationConfig) {
 	couriers, _ := generators.GenerateCouriers(tx, countGen.Courier)
 	promoCodes, _ := generators.GeneratePromoCodes(tx, clients, countGen.PromoCodes)
 	orders, _ := generators.GenerateOrders(tx, clients, couriers, promoCodes, rates, countGen.Orders)
-
 	chats, _ := generators.GenerateChats(tx, clients, couriers, supportStaffs, countGen.Chat)
+	messages, _ := generators.GenerateMessages(tx, chats, clients, couriers, supportStaffs, countGen.Messages)
 
-	fmt.Println(rates[1], supportStaffs[1], clients[1], couriers[1], promoCodes[1], orders[1], chats[1])
-	//generators.GenerateMessages(tx, chats, clients, couriers, supportStaffs, countGen.Messages)
+	// Заглушки, возможно могут понадобится эти массивы
+	_ = orders
+	_ = messages
 
 	// Завершение транзакции
 	if err := tx.Commit().Error; err != nil {
