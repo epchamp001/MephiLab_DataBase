@@ -3,6 +3,7 @@ package main
 import (
 	"ORM_DB/internal/config"
 	"ORM_DB/internal/database/connections"
+	"ORM_DB/internal/database/seeds/seeder"
 	"ORM_DB/migrations"
 	"encoding/json"
 	"fmt"
@@ -58,7 +59,7 @@ func main() {
 
 	//Генерация данных
 	//seeds.ClearDatabase(db) // очищаю во избежание дублирование одинаковых рандомных id
-	//seeds.SeedData(db, cfg.DataGeneration)
+	seeder.SeedData(db, cfg.DataGeneration)
 	//log.Println("Генерация данных завершена успешно")
 
 	log.Println("Приложение завершено успешно")

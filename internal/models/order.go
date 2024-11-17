@@ -1,9 +1,12 @@
 package models
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Order struct {
-	ID                 uint          `gorm:"primaryKey"`
+	gorm.Model
 	Urgency            Urgency       `gorm:"not null"`
 	SenderID           uint          `gorm:"not null;constraint:OnDelete:CASCADE"`
 	RecipientID        uint          `gorm:"not null;constraint:OnDelete:CASCADE"`

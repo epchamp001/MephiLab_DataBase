@@ -1,9 +1,12 @@
 package models
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type PromoCode struct {
-	ID             uint          `gorm:"primaryKey"`
+	gorm.Model
 	Type           PromoCodeType `gorm:"not null"`
 	ClientID       *uint         `gorm:"constraint:OnDelete:SET NULL"`
 	Code           string        `gorm:"not null; unique"`

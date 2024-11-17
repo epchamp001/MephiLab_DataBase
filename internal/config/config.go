@@ -7,14 +7,14 @@ import (
 
 // DataGenerationConfig структура для количества генерируемых данных
 type DataGenerationConfig struct {
-	Chat         int `yaml:"num_chat"`
+	Chat         int `yaml:"num_chats"`
 	Clients      int `yaml:"num_clients"`
 	Orders       int `yaml:"num_orders"`
 	Messages     int `yaml:"num_messages"`
-	Order        int `yaml:"num_order"`
-	Courier      int `yaml:"num_courier"`
-	SupportStaff int `yaml:"num_support_staff"`
-	Rate         int `yaml:"num_rate"`
+	PromoCodes   int `yaml:"num_promo_codes"`
+	Courier      int `yaml:"num_couriers"`
+	SupportStaff int `yaml:"num_support_staffs"`
+	Rate         int `yaml:"num_rates"`
 }
 
 // Config структура для конфигурационного файла

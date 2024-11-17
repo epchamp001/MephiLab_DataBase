@@ -1,7 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Rate struct {
-	ID            uint          `gorm:"primaryKey"`
+	gorm.Model
 	DeliveryType  DeliveryType  `gorm:"not null"`
 	TransportType TransportType `gorm:"not null"`
 	Name          string        `gorm:"not null"`

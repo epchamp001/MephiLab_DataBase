@@ -14,56 +14,55 @@ type PaymentStatus string
 type PromoCodeType string
 type DeliveryType string
 
-// Константы
 const (
 	// Role
-	Sender   Role = "sender"
-	Receiver Role = "receiver"
+	Sender   Role = "отправитель"
+	Receiver Role = "получатель"
 
 	// EmploymentStatus
-	SelfEmployed EmploymentStatus = "self-employed"
-	Official     EmploymentStatus = "official"
+	SelfEmployed EmploymentStatus = "самозанятый"
+	Official     EmploymentStatus = "официально трудоустроенный"
 
 	// TransportType
-	OnFoot TransportType = "on foot"
-	Car    TransportType = "car"
-	Truck  TransportType = "truck"
+	OnFoot TransportType = "пешком"
+	Car    TransportType = "автомобиль"
+	Truck  TransportType = "грузовик"
 
 	// AvailabilityStatus
-	Available AvailabilityStatus = "available"
-	Busy      AvailabilityStatus = "busy"
+	Available AvailabilityStatus = "доступен"
+	Busy      AvailabilityStatus = "занят"
 
 	// ParticipantType
-	ClientParticipant  ParticipantType = "client"
-	CourierParticipant ParticipantType = "courier"
+	ClientParticipant  ParticipantType = "клиент"
+	CourierParticipant ParticipantType = "курьер"
 
 	// Status
-	Open   Status = "open"
-	Closed Status = "closed"
+	Open   Status = "открыт"
+	Closed Status = "закрыт"
 
 	// SenderType
-	ClientSender       SenderType = "client"
-	CourierSender      SenderType = "courier"
-	SupportStaffSender SenderType = "support staff"
+	ClientSender       SenderType = "клиент"
+	CourierSender      SenderType = "курьер"
+	SupportStaffSender SenderType = "сотрудник поддержки"
 
 	// Urgency
-	Urgent    Urgency = "urgent"
-	Scheduled Urgency = "scheduled"
+	Urgent    Urgency = "срочно"
+	Scheduled Urgency = "запланировано"
 
 	// CurrentStatus
-	WaitingForCourier CurrentStatus = "waiting for courier"
-	InTransit         CurrentStatus = "in transit"
-	Delivered         CurrentStatus = "delivered"
+	WaitingForCourier CurrentStatus = "ожидание курьера"
+	InTransit         CurrentStatus = "в пути"
+	Delivered         CurrentStatus = "доставлено"
 
 	// PaymentStatus
-	Paid   PaymentStatus = "paid"
-	Unpaid PaymentStatus = "unpaid"
+	Paid   PaymentStatus = "оплачено"
+	Unpaid PaymentStatus = "не оплачено"
 
 	// PromoCodeType
-	Discount          PromoCodeType = "discount"
-	AdditionalService PromoCodeType = "additional service"
+	Discount          PromoCodeType = "скидка"
+	AdditionalService PromoCodeType = "дополнительная услуга"
 
 	// DeliveryType
-	DeliveryUrgent    DeliveryType = "urgent"
-	DeliveryScheduled DeliveryType = "scheduled"
+	DeliveryUrgent    DeliveryType = "срочная доставка"
+	DeliveryScheduled DeliveryType = "запланированная доставка"
 )

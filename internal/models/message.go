@@ -1,9 +1,12 @@
 package models
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Message struct {
-	ID         uint       `gorm:"primaryKey"`
+	gorm.Model
 	ChatID     uint       `gorm:"not null;constraint:OnDelete:CASCADE"`
 	SenderType SenderType `gorm:"not null"`
 	SenderID   uint       `gorm:"not null"`

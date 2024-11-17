@@ -1,20 +1,25 @@
 package utils
 
 import (
-	randData "ORM_DB/internal/database/seeds/parsers"
-	models2 "ORM_DB/internal/models"
-	"ORM_DB/models"
+	"ORM_DB/internal/database/seeds/parsers"
+	"ORM_DB/internal/models"
 	"math/rand"
 )
 
-func GenerateReason(participantType models.ParticipantTypeEnum) string {
+func GenerateReason(participantType models.ParticipantType) string {
 	switch participantType {
-	case models2.CourierParticipant:
+	case models.CourierParticipant:
 		// Если участник - курьер, выбираем причину из списка курьеров
-		return randData.ReasonChatCourier[rand.Intn(len(randData.ReasonChatCourier))]
-	case models2.ClientParticipant:
+		if len(parsers.GlobalData.ReasonChatCourier) > 0 {
+			return parsers.GlobalData.ReasonChatCourier[rand.Intn(len(parsers.GlobalData.ReasonChatCourier))]
+		}
+		return "Данные для причин чатов с курьерами не загружены"
+	case models.ClientParticipant:
 		// Если участник - клиент, выбираем причину из списка клиентов
-		return randData.ReasonChatClient[rand.Intn(len(randData.ReasonChatClient))]
+		if len(parsers.GlobalData.ReasonChatClient) > 0 {
+			return parsers.GlobalData.ReasonChatClient[rand.Intn(len(parsers.GlobalData.ReasonChatClient))]
+		}
+		return "Данные для причин чатов с клиентами не загружены"
 	default:
 		return "Неопределённый участник."
 	}

@@ -1,11 +1,15 @@
 package models
 
-import "time"
+import (
+	"gorm.io/gorm"
+	"time"
+)
 
 type Chat struct {
-	ID              uint            `gorm:"primaryKey"`
+	gorm.Model
 	ParticipantType ParticipantType `gorm:"not null"`
-	ParticipantID   uint            `gorm:"not null"`
+	ClientID        *uint           // NULL, если участник - курьер
+	CourierID       *uint           // NULL, если участник - клиент
 	SupportStaffID  *uint           `gorm:"constraint:OnDelete:SET NULL"`
 	Status          Status          `gorm:"not null"`
 	CreationDate    time.Time

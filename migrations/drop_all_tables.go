@@ -16,8 +16,6 @@ func DropAllTables(db *gorm.DB) {
 		err := db.Migrator().DropTable(table)
 		if err != nil {
 			log.Fatalf("Failed to drop table %s: %v", table, err)
-		} else {
-			log.Printf("Table %s dropped successfully\n", table)
 		}
 	}
 }

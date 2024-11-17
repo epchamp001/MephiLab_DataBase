@@ -1,81 +1,79 @@
 package utils
 
 import (
-	models2 "ORM_DB/internal/models"
-	"ORM_DB/models"
+	"ORM_DB/internal/models"
 	"math/rand"
 )
 
-func RandomRole() models.RoleEnum {
-	roles := []models.RoleEnum{models2.Sender, models2.Receiver}
+func RandomRole() models.Role {
+	roles := []models.Role{models.Sender, models.Receiver}
 	return roles[rand.Intn(len(roles))]
 }
 
-func RandomEmploymentStatus() models.EmploymentStatusEnum {
-	statuses := []models.EmploymentStatusEnum{models2.SelfEmployed, models2.Official}
+func RandomEmploymentStatus() models.EmploymentStatus {
+	statuses := []models.EmploymentStatus{models.SelfEmployed, models.Official}
 	return statuses[rand.Intn(len(statuses))]
 }
 
-func RandomTransportType() models.TransportTypeEnum {
-	types := []models.TransportTypeEnum{models2.OnFoot, models2.Car, models2.Truck}
+func RandomTransportType() models.TransportType {
+	types := []models.TransportType{models.OnFoot, models.Car, models.Truck}
 	return types[rand.Intn(len(types))]
 }
 
-func RandomAvailabilityStatus() models.AvailabilityStatusEnum {
-	statuses := []models.AvailabilityStatusEnum{models2.Available, models2.Busy}
+func RandomAvailabilityStatus() models.AvailabilityStatus {
+	statuses := []models.AvailabilityStatus{models.Available, models.Busy}
 	return statuses[rand.Intn(len(statuses))]
 }
 
-func RandomParticipantType() models.ParticipantTypeEnum {
-	types := []models.ParticipantTypeEnum{models2.ClientParticipant, models2.CourierParticipant}
+func RandomParticipantType() models.ParticipantType {
+	types := []models.ParticipantType{models.ClientParticipant, models.CourierParticipant}
 	return types[rand.Intn(len(types))]
 }
 
-func RandomStatus() models.StatusEnum {
-	statuses := []models.StatusEnum{models2.Open, models2.Closed}
+func RandomStatus() models.Status {
+	statuses := []models.Status{models.Open, models.Closed}
 	return statuses[rand.Intn(len(statuses))]
 }
 
-func RandomSenderType() models.SenderTypeEnum {
-	types := []models.SenderTypeEnum{
-		models2.ClientSender,
-		models2.CourierSender,
-		models2.SupportStaffSender,
-	}
+func RandomSenderType() models.SenderType {
+	types := []models.SenderType{models.ClientSender, models.CourierSender, models.SupportStaffSender}
 	return types[rand.Intn(len(types))]
 }
 
-func RandomUrgency() models.UrgencyEnum {
-	urgencies := []models.UrgencyEnum{models2.Urgent, models2.Scheduled}
+func RandomUrgency() models.Urgency {
+	urgencies := []models.Urgency{models.Urgent, models.Scheduled}
 	return urgencies[rand.Intn(len(urgencies))]
 }
 
-func RandomCurrentStatus() models.CurrentStatusEnum {
-	statuses := []models.CurrentStatusEnum{models2.WaitingForCourier, models2.InTransit, models2.Delivered}
+func RandomCurrentStatus() models.CurrentStatus {
+	statuses := []models.CurrentStatus{models.WaitingForCourier, models.InTransit, models.Delivered}
 	return statuses[rand.Intn(len(statuses))]
 }
 
-func RandomPaymentStatus() models.PaymentStatusEnum {
-	statuses := []models.PaymentStatusEnum{models2.Paid, models2.Unpaid}
+func RandomPaymentStatus() models.PaymentStatus {
+	statuses := []models.PaymentStatus{models.Paid, models.Unpaid}
 	return statuses[rand.Intn(len(statuses))]
 }
 
-func RandomPromoCodeType() models.PromoCodeTypeEnum {
-	types := []models.PromoCodeTypeEnum{models2.Discount, models2.AdditionalService}
+func RandomPromoCodeType() models.PromoCodeType {
+	types := []models.PromoCodeType{models.Discount, models.AdditionalService}
 	return types[rand.Intn(len(types))]
 }
 
-func RandomDeliveryType() models.DeliveryTypeEnum {
-	types := []models.DeliveryTypeEnum{models2.DeliveryUrgent, models2.DeliveryScheduled}
+func RandomDeliveryType() models.DeliveryType {
+	types := []models.DeliveryType{models.DeliveryUrgent, models.DeliveryScheduled}
 	return types[rand.Intn(len(types))]
 }
 
 func RandomJobTitle() string {
-	jobTitles := []string{"Manager", "Engineer", "Developer", "Consultant", "Analyst", "Specialist", "Coordinator"}
+	jobTitles := []string{
+		"Оператор", "Координатор", "Супервайзер", "Модератор", "Аналитик",
+		"Администратор", "Менеджер", "Диспетчер", "Специалист",
+	}
 	return jobTitles[rand.Intn(len(jobTitles))]
 }
 
 func RandomPaymentMethod() string {
-	methods := []string{"credit card", "cash"}
+	methods := []string{"карта", "наличные"}
 	return methods[rand.Intn(len(methods))]
 }

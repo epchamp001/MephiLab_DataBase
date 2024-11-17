@@ -1,7 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Courier struct {
-	ID                 uint               `gorm:"primaryKey"`
+	gorm.Model
 	EmploymentStatus   EmploymentStatus   `gorm:"not null"`
 	TransportType      TransportType      `gorm:"not null"`
 	AvailabilityStatus AvailabilityStatus `gorm:"not null"`
@@ -11,6 +13,6 @@ type Courier struct {
 	Photo              string
 	Passport           string
 	GPSCoordinates     string
-	Chats              []Chat  `gorm:"foreignKey:ParticipantID"`
+	Chats              []Chat  `gorm:"foreignKey:CourierID"`
 	Orders             []Order `gorm:"foreignKey:CourierID"`
 }

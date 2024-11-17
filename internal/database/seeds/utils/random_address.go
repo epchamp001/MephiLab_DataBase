@@ -1,19 +1,19 @@
 package utils
 
 import (
-	randData "ORM_DB/internal/database/seeds/parsers"
+	"ORM_DB/internal/database/seeds/parsers"
 	"fmt"
 	"math/rand"
 )
 
 // GenerateMoscowAddress генерирует случайный адрес в Москве
 func GenerateMoscowAddress() string {
-	if len(randData.StreetsInMoscow) == 0 || len(randData.RegionsInMoscow) == 0 {
+	if len(parsers.GlobalData.StreetsInMoscow) == 0 || len(parsers.GlobalData.RegionsInMoscow) == 0 {
 		return "Данные для адресов не загружены"
 	}
 
-	street := randData.StreetsInMoscow[rand.Intn(len(randData.StreetsInMoscow))]
-	district := randData.RegionsInMoscow[rand.Intn(len(randData.RegionsInMoscow))]
+	street := parsers.GlobalData.StreetsInMoscow[rand.Intn(len(parsers.GlobalData.StreetsInMoscow))]
+	district := parsers.GlobalData.RegionsInMoscow[rand.Intn(len(parsers.GlobalData.RegionsInMoscow))]
 	houseNumber := rand.Intn(100) + 1     // Генерируем номер дома от 1 до 100
 	apartmentNumber := rand.Intn(200) + 1 // Генерируем номер квартиры от 1 до 200
 
