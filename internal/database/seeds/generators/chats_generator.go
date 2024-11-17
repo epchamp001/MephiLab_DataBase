@@ -11,37 +11,35 @@ import (
 func GenerateChats(tx *gorm.DB, clients []models.Client, couriers []models.Courier, supportStaff []models.SupportStaff, count int) ([]models.Chat, error) {
 	var chats []models.Chat
 
-	// Проверяем, есть ли данные для генерации чатов
 	if len(clients) == 0 || len(couriers) == 0 || len(supportStaff) == 0 {
 		return nil, fmt.Errorf("нет данных для генерации чатов")
 	}
 
 	for i := 0; i < count; i++ {
-		// Случайно выбираем тип участника
+		// Генерируем случайный тип участника
 		participantType := utils.RandomParticipantType()
 
-		var clientID, courierID *uint
+		var participantID uint
 		if participantType == models.ClientParticipant && len(clients) > 0 {
-			// Если участник - клиент, выбираем случайного клиента
+			// Выбираем случайного клиента
 			client := clients[rand.Intn(len(clients))]
-			clientID = &client.ID
+			participantID = client.ID
 		} else if participantType == models.CourierParticipant && len(couriers) > 0 {
-			// Если участник - курьер, выбираем случайного курьера
+			// Выбираем случайного курьера
 			courier := couriers[rand.Intn(len(couriers))]
-			courierID = &courier.ID
+			participantID = courier.ID
 		} else {
-			// Пропускаем, если не удалось выбрать участника
+			// Если подходящего участника нет, пропускаем итерацию
 			continue
 		}
 
 		// Выбираем случайного сотрудника поддержки
 		support := supportStaff[rand.Intn(len(supportStaff))]
 
-		// Создаем чат с заполнением соответствующих полей
+		// Создаем объект чата
 		chat := models.Chat{
-			ParticipantType: participantType,
-			ClientID:        clientID,
-			CourierID:       courierID,
+			ParticipantID:   participantID,
+			ParticipantType: participantType, // Используем сгенерированный тип участника
 			SupportStaffID:  &support.ID,
 			Status:          utils.RandomStatus(),
 			CreationDate:    utils.GenerateRandomDate2024(),

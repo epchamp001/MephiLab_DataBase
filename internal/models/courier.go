@@ -13,6 +13,6 @@ type Courier struct {
 	Photo              string
 	Passport           string
 	GPSCoordinates     string
-	Chats              []Chat  `gorm:"foreignKey:CourierID"`
+	Chats              []Chat  `gorm:"polymorphic:Participant;"`
 	Orders             []Order `gorm:"foreignKey:CourierID"`
 }

@@ -7,9 +7,8 @@ import (
 
 type Chat struct {
 	gorm.Model
-	ParticipantType ParticipantType `gorm:"not null"`
-	ClientID        *uint           // NULL, если участник - курьер
-	CourierID       *uint           // NULL, если участник - клиент
+	ParticipantID   uint            `gorm:"not null"` // ID клиента или курьера
+	ParticipantType ParticipantType `gorm:"not null"` // Тип участника: "клиент" или "курьер"
 	SupportStaffID  *uint           `gorm:"constraint:OnDelete:SET NULL"`
 	Status          Status          `gorm:"not null"`
 	CreationDate    time.Time
